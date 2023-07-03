@@ -1,0 +1,92 @@
+<html>
+<head>
+    <title>LoginPage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        form {
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 250px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: #ff0000;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var userData = localStorage.getItem('userData');
+            userData = JSON.parse(userData);
+            
+            $('#submit').on('click',function(event) {
+                event.preventDefault(); 
+                
+                var email = $('#emailId').val();
+                var password = $('#passWord').val();
+                var matched = false;
+                for (var i = 0; i < userData.length; i++) {
+                    var user = userData[i];
+                    if (user.emailId === email && user.Password === password) {
+                        matched = true;
+                        localStorage.setItem('newData', JSON.stringify(user))
+                        break;
+                    }
+                }
+                if (matched) {
+              
+                    window.location.href = 'userPage.html';
+                } else {
+                    $('.error-message').text('Invalid email or password.');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <form>
+        <h1>Login</h1>
+        <input type="email" id="emailId" placeholder="Enter the email" />
+        <input type="password" id="passWord" placeholder="Enter the Password" />
+        <input type="submit" id="submit" value="Submit" />
+        <div class="error-message"></div>
+    </form>
+</body>
+</html>

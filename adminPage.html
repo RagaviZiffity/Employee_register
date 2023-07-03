@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    
+        h1 {
+            text-align: center;
+        }
+    
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+    
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+    
+        input[type="text"] {
+            padding: 6px 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+    
+        button {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+    
+        #pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+    
+        #pagination span {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 5px;
+            background-color: #f2f2f2;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+    </style>
+    
+    <script>
+        $(document).ready(function() {
+            var userData = localStorage.getItem('userData');
+            userData = JSON.parse(userData);
+            userData.sort((a, b) => {
+                let da = new Date(a.dob),
+                    db = new Date(b.dob);
+                return da - db;
+            });
+            
+            var table = $('#userTable');
+            var rowsPerPage = 3;
+            var totalPages = Math.ceil(userData.length / rowsPerPage);
+            
+            function displayRows(page) 
+            {
+                var startIndex = (page - 1) * rowsPerPage;
+                var endIndex = Math.min(startIndex + rowsPerPage, userData.length);
+                //clearing the row for next iteration
+                var rows = '';
+                for (var i = startIndex; i < endIndex; i++) 
+                {
+                    rows += '<tr>' +
+                        '<td>' + userData[i].firstName + '</td>' +
+                        '<td>' + userData[i].lastName + '</td>' +
+                        '<td>' + userData[i].emailId + '</td>' +
+                        '<td>' + userData[i].dob  + '</td>' +
+                        '<td>' + userData[i].city + '</td>' +
+                        '<td>' + userData[i].state + '</td>' +
+                        '</tr>';
+                }
+                //to insert row values in tbody tag
+                $('tbody').html(rows);
+            }
+            var pagination= $('#pagination');
+            for(var i=1; i<=totalPages; i++)
+            {
+                //using span tag dynamically according to the input
+                pagination.append('<span class="page-link">' + i + '</span>');
+            }
+            pagination.on('click', '.page-link', function() 
+            {
+                var page = parseInt($(this).text());
+                displayRows(page);
+            });
+            displayRows(1);
+
+
+            $('#searchButton').on('click', function() 
+            {
+                var userData = localStorage.getItem('userData');
+                userData = JSON.parse(userData);
+
+                var val= $('#searchInput').val();
+                var obj=[];
+                for(var i=0; i < userData.length; i++)
+                {
+                    for (const key in userData[i]) 
+                    {
+                        if (userData[i][key].indexOf(val) !== -1) 
+                        {
+                            obj.push(userData[i]);
+                        }
+                    }
+                }
+                var rows = '';
+                for (const key in obj) 
+                {
+                    rows += '<tr>' +
+                        '<td>' + obj[key].firstName + '</td>' +
+                        '<td>' + obj[key].lastName + '</td>' +
+                        '<td>' + obj[key].emailId + '</td>' +
+                        '<td>' + obj[key].dob  + '</td>' +
+                        '<td>' + obj[key].city + '</td>' +
+                        '<td>' + obj[key].state + '</td>' +
+                        '</tr>';
+                }
+                //to insert row values in tbody tag
+                $('tbody').html(rows);
+            });
+            
+        });
+    </script>
+</head>
+<body>
+    <h1>User Management</h1>
+  
+    <div>
+        <input type="text" id="searchInput" placeholder="Search by name">
+        <button id="searchButton">Search</button>
+    </div>
+    
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Date of Birth</th>
+                <th>City</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    
+    <div id="pagination"></div>
+</body>
+</html>
